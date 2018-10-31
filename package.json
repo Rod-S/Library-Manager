@@ -1,0 +1,24 @@
+{
+  "name": "unit-10---library-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rod-S/Unit-10---Library-Manager.git"
+  },
+  "author": "Rod-S",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rod-S/Unit-10---Library-Manager/issues"
+  },
+  "homepage": "https://github.com/Rod-S/Unit-10---Library-Manager#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "pug": "^2.0.3"
+  }
+}
