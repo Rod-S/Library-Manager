@@ -19,6 +19,10 @@
   "homepage": "https://github.com/Rod-S/Unit-10---Library-Manager#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "pug": "^2.0.3"
+    "express-generator": "^4.16.0",
+    "pug": "^2.0.3",
+    "sequelize": "^4.41.0",
+    "sequelize-cli": "^5.2.0",
+    "sqlite3": "^4.0.3"
   }
 }
