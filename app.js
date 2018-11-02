@@ -1,75 +1,48 @@
-//require necessary dependencies
-const express = require('express');
-const app = express();
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-//setup static route to server static files in public folder
-app.use('/static', express.static('public'));
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
-//set view engine to read pug files in view folder
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-//route to home, rendering home.pug
-app.get('/', (req, res) => {
-  res.render('index');
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/all_books.html', indexRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
 
-app.get('/all_books.html', (req, res) => {
-  res.render('all_books');
-});
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-app.get('/new_book.html', (req, res) => {
-  res.render('new_book');
-});
-
-app.get('/overdue_books.html', (req, res) => {
-  res.render('overdue_books');
-});
-
-app.get('/checked_books.html', (req, res) => {
-  res.render('checked_books');
-});
-
-app.get('/book_detail.html', (req, res) => {
-  res.render('book_detail');
-});
-
-app.get('/all_patrons.html', (req, res) => {
-  res.render('all_patrons');
-});
-
-app.get('/new_patron.html', (req, res) => {
-  res.render('new_patron');
-});
-
-app.get('/patron_detail.html', (req, res) => {
-  res.render('patron_detail');
-});
-
-app.get('/all_loans.html', (req, res) => {
-  res.render('all_loans');
-});
-
-app.get('/new_loan.html', (req, res) => {
-  res.render('new_loan');
-});
-
-app.get('/overdue_loans.html', (req, res) => {
-  res.render('overdue_loans');
-});
-
-app.get('/checked_loans.html', (req, res) => {
-  res.render('checked_loans');
-});
-
-app.get('/return_book.html', (req, res) => {
-  res.render('return_book');
-});
-
-app.get('/error.html', (req, res) => {
+  // render the error page
+  res.status(err.status || 500);
   res.render('error');
 });
 
-//start server on localhost port 3000
+module.exports = app;
+
+
+//temp function for Atom Runner start server on localhost port 3000
 app.listen(3000, () => {
   console.log('The application is running on localhost:3000!');
 })
