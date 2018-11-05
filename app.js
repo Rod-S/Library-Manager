@@ -40,9 +40,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-
-//temp function for Atom Runner start server on localhost port 3000
-app.listen(3000, () => {
-  console.log('The application is running on localhost:3000!');
-})
