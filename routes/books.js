@@ -4,7 +4,9 @@ var Book = require('../models').Book;
 
 /* GET book list */
 router.get('/', function(req, res, next) {
-  res.render("all_books");
+  Book.findAll().then((books)=> {
+    res.render("all_books", {books: books});
+  });
 });
 
 /* POST create book */
