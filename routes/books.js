@@ -2,19 +2,14 @@ var express = require('express');
 var router = express.Router();
 var Book = require('../models').Book;
 
-
-/* GET articles listing. */
+/* GET book list */
 router.get('/', function(req, res, next) {
   res.render("all_books");
 });
 
-
-/* POST create book. */
-
+/* POST create book */
 router.post('/', (req, res, next) => {
-  Book.create(
-
-  )
+  Book.create(req.body)
   .then((book) => {
     res.redirect('/books/new');
   });
@@ -24,5 +19,14 @@ router.post('/', (req, res, next) => {
 router.get('/new', (req, res, next) => {
   res.render('new_book', {book: Book.build(), title: "New Book"});
 });
+
+/*get individual book*/
+router.get('/:id', (req, res, next) => {
+  Book.findById(req.params.id).then((book)=> {
+    res.render("book_detail", {book: book, title: book.title, author: book.author, genre: book.genre, first_published: book.first_published});
+  });
+});
+
+
 
 module.exports = router;
