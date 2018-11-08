@@ -11,10 +11,6 @@ router.get('/all_books.html', (req, res, next) => {
   res.render('all_books');
 });
 
-router.get('/new_book.html', (req, res) => {
-  res.render('new_book');
-});
-
 router.get('/overdue_books.html', (req, res) => {
   res.render('overdue_books');
 });
