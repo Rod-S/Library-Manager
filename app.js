@@ -6,6 +6,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var books = require('./routes/books');
+var loans = require('./routes/loans');
 
 var app = express();
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/books', books);
+app.use('/loans', loans);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
