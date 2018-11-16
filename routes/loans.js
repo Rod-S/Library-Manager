@@ -2,22 +2,30 @@ var express = require('express');
 var router = express.Router();
 var Loan = require('../models').Loan;
 var Book = require('../models').Book;
-
-function bookName(book_id) {
-  var matchedName = books.filter(function(book) {return book.id == book_id;});
-  return matchedBooks[0];
-};
-
+var Patron = require('../models').Patron;
 
 
 /* GET loan list */
 router.get('/', function(req, res, next) {
 
-  Loan.findAll({include: [{ all: true }] })
-  .then((loans, book, books, Book)=> {
-    res.render("all_loans", {loans: loans, title: loan.book.title});
-  });
+  Loan.findAll({
+    include: [
+      {
+        model: Book,
+        required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  }).then((loans) => {
+    //const resObj = res.json(Loan[0].Book.title);
 
+    //console.log(res.json(Loan));
+    //console.log(Loan[0][1]);
+    res.render("all_loans", {loans: loans});
+  });
 });
 
 router.get('/new', function(req, res, next) {

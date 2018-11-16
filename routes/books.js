@@ -9,7 +9,8 @@ function find(id) {
 
 /* GET book list */
 router.get('/', function(req, res, next) {
-  Book.findAll().then((books)=> {
+  Book.findAll()
+  .then((books)=> {
     res.render("all_books", {books: books});
   });
 });
