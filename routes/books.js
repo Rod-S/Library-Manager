@@ -32,7 +32,13 @@ router.get('/new', (req, res, next) => {
 /* get individual book */
 router.get('/:id', (req, res, next) => {
   Book.findById(req.params.id).then((book)=> {
-    res.render("book_detail", {book: book, title: book.title, author: book.author, genre: book.genre, first_published: book.first_published});
+    res.render("book_detail", {
+      book: book,
+      title: book.title,
+      author: book.author,
+      genre: book.genre,
+      first_published: book.first_published
+    });
   });
 });
 
