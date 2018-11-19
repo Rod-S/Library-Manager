@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Book = require('../models').Book;
+var Loan = require('../models').Loan;
+var Patron = require('../models').Patron;
 
 
 /* GET book list */
@@ -30,8 +32,23 @@ router.get('/new', (req, res, next) => {
 
 /* get individual book */
 router.get('/:id', (req, res, next) => {
-  Book.findById(req.params.id)
+  Book.findAll({
+    where: {
+      'id': req.params.id
+    },
+    include: [
+      {
+          model: Loan,
+          required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  })
   .then((book)=> {
+    console.log(book);
     res.render("book_detail", {
       book: book,
       title: book.title,
