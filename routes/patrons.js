@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Patron = require('../models').Patron;
+var Loan = require('../models').Loan;
+var Book = require('../models').Book;
 
 /* GET patron list */
 router.get('/', function (req, res, next) {
@@ -12,11 +14,15 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/new', function(req, res, next) {
-  res.render('new_patron', {patron: Patron.build(), title: "New Patron" })
+  res.render('new_patron', {
+    patron: Patron.build(),
+    title: "New Patron"
+  });
 });
 
 router.get('/:id', function(req, res, next) {
-  Patron.findById(req.params.id).then((patron) => {
+  Patron.findById(req.params.id)
+  .then((patron) => {
     res.render("patron_detail", {
       patron: patron,
       first_name: patron.first_name,
@@ -28,5 +34,23 @@ router.get('/:id', function(req, res, next) {
     });
   });
 });
+
+router.get('/return_book', function(req, res, next){
+  Loan.findAll({
+    include: [
+      {
+        model: Book,
+        required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  }).then((loans) => {
+    res.render("return_book", {loans: loans});
+  })
+});
+
 
 module.exports = router;

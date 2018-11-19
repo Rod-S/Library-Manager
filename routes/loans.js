@@ -7,7 +7,6 @@ var Patron = require('../models').Patron;
 
 /* GET loan list */
 router.get('/', function(req, res, next) {
-
   Loan.findAll({
     include: [
       {
@@ -20,16 +19,33 @@ router.get('/', function(req, res, next) {
       }
     ]
   }).then((loans) => {
-    //const resObj = res.json(Loan[0].Book.title);
-
-    //console.log(res.json(Loan));
-    //console.log(Loan[0][1]);
     res.render("all_loans", {loans: loans});
   });
 });
 
 router.get('/new', function(req, res, next) {
-  res.render('new_loan', {loan: Loan.build(), title: "New Loan"});
+  res.render('new_loan', {
+    loan: Loan.build(),
+    title: "New Loan"
+  });
+});
+
+/* GET return book page */
+router.get('/:id/return_book', function(req, res, next) {
+  Loan.findAll({
+    include: [
+      {
+        model: Book,
+        required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  }).then((loans) => {
+    res.render("return_book", {loans: loans});
+  });
 });
 
 module.exports = router;

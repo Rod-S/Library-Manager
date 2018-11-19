@@ -2,10 +2,6 @@ var express = require('express');
 var router = express.Router();
 var Book = require('../models').Book;
 
-function find(id) {
-  var matchedBooks = books.filter(function(book) { return book.id == id; });
-  return matchedBooks[0];
-};
 
 /* GET book list */
 router.get('/', function(req, res, next) {
@@ -26,12 +22,16 @@ router.post('/', (req, res, next) => {
 
 /* create a new book form */
 router.get('/new', (req, res, next) => {
-  res.render('new_book', {book: Book.build(), title: "New Book"});
+  res.render('new_book', {
+    book: Book.build(),
+    title: "New Book"
+  });
 });
 
 /* get individual book */
 router.get('/:id', (req, res, next) => {
-  Book.findById(req.params.id).then((book)=> {
+  Book.findById(req.params.id)
+  .then((book)=> {
     res.render("book_detail", {
       book: book,
       title: book.title,
