@@ -39,23 +39,17 @@ router.get('/:id', (req, res, next) => {
     include: [
       {
           model: Loan,
-          required: true
+          where:{},
       },
       {
         model: Patron,
-        required: true
-      }
+          }
     ]
   })
-  .then((book)=> {
-    console.log(book);
-    res.render("book_detail", {
-      book: book,
-      title: book.title,
-      author: book.author,
-      genre: book.genre,
-      first_published: book.first_published
-    });
+  .then((books)=> {
+    console.log(books[0]);
+    console.log(books[0].Loans[0]);
+    res.render("book_detail", {books: books});
   });
 });
 
