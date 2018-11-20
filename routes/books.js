@@ -33,22 +33,15 @@ router.get('/new', (req, res, next) => {
 /* get individual book */
 router.get('/:id', (req, res, next) => {
   Book.findAll({
-    where: {
-      'id': req.params.id
-    },
-    include: [
-      {
-          model: Loan,
-          where:{},
-      },
-      {
-        model: Patron,
-          }
+    where: {'id': req.params.id},
+    include:
+    [
+      {model: Loan},
+      {model: Patron}
     ]
   })
   .then((books)=> {
     console.log(books[0]);
-    console.log(books[0].Loans[0]);
     res.render("book_detail", {books: books});
   });
 });
