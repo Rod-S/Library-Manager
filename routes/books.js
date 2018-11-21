@@ -34,16 +34,21 @@ router.get('/new', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   Book.findAll({
     where: {'id': req.params.id},
-    include:
-    [
-      {model: Loan},
-      {model: Patron}
+    include: [
+      {
+        model: Loan,
+        include: [
+          {
+            model: Patron
+          }
+        ]
+      }
     ]
   })
   .then((books)=> {
-    console.log(books[0]);
-    res.render("book_detail", {books: books});
-  });
+    if (books[0].Loans[0]) {res.render("book_detail_loan", {books: books})}
+    else {res.render("book_detail", {books: books})}
+    });
 });
 
 /* PUT update book */
@@ -62,6 +67,7 @@ router.post("/:id", (req, res, next) => {
     res.redirect("/books/");
   });
 });
+
 
 
 module.exports = router;

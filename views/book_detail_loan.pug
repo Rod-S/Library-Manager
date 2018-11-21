@@ -30,8 +30,15 @@ block content
     tbody
       tr
           td
+            a(href='book_detail.html') #{books[0].title}
           td
-          td 
-          td 
-          td
-          td
+            a(href='patron_detail.html') #{books[0].Loans[0].Patron.first_name + ' ' + books[0].Loans[0].Patron.last_name}
+          td #{books[0].Loans[0].loaned_on}
+          td #{books[0].Loans[0].return_by}
+          if books[0].Loans[0].returned_on  
+            td #{books[0].Loans[0].returned_on}          
+            td
+          if !books[0].Loans[0].returned_on
+            td
+            td  
+              a.button(href='return_book.html') Return Book
