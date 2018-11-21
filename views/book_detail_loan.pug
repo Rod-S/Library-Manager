@@ -30,9 +30,9 @@ block content
     tbody
       tr
           td
-            a(href='book_detail.html') #{books[0].title}
+            a(href='/../books/' + books[0].id) #{books[0].title}
           td
-            a(href='patron_detail.html') #{books[0].Loans[0].Patron.first_name + ' ' + books[0].Loans[0].Patron.last_name}
+            a(href='/../patrons/'+ books[0].Loans[0].Patron.id) #{books[0].Loans[0].Patron.first_name + ' ' + books[0].Loans[0].Patron.last_name}
           td #{books[0].Loans[0].loaned_on}
           td #{books[0].Loans[0].return_by}
           if books[0].Loans[0].returned_on  
@@ -41,4 +41,4 @@ block content
           if !books[0].Loans[0].returned_on
             td
             td  
-              a.button(href='return_book.html') Return Book
+              a.button(href='/../patrons/return_book/'+ books[0].id) Return Book

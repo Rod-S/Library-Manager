@@ -4,16 +4,16 @@ block content
   h1 Patron: Return Book
   p
     strong Book Title: 
-    | Harry Potter and the Goblet of Fire
+    | #{loans[0].Book.title}
   p
     strong Loaned By: 
-    | Andrew Chalkley
+    | #{loans[0].Patron.first_name} #{loans[0].Patron.last_name}
   p
     strong Loaned On: 
-    | 2015-12-11
+    | #{loans[0].loaned_on}
   p
     strong Return By: 
-    | 2015-12-18
+    | #{loans[0].return_by}
   form
     p
       label(for='returned_on') Returned on:

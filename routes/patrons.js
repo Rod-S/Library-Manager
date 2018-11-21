@@ -35,8 +35,9 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-router.get('/return_book', function(req, res, next){
+router.get('/return_book/:id', function(req, res, next){
   Loan.findAll({
+    where: {'book_id': req.params.id},
     include: [
       {
         model: Book,
@@ -48,6 +49,7 @@ router.get('/return_book', function(req, res, next){
       }
     ]
   }).then((loans) => {
+    console.log(loans[0].Book);
     res.render("return_book", {loans: loans});
   })
 });
