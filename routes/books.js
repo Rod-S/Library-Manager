@@ -46,14 +46,16 @@ router.get('/:id', (req, res, next) => {
     ]
   })
   .then((books)=> {
-    if (books[0].Loans[0]) {res.render("book_detail_loan", {books: books})}
-    else {res.render("book_detail", {books: books})}
-    });
+    if (books[0].Loans[0]) {
+      res.render("book_detail_loan", {books: books});
+    } else {
+      res.render("book_detail", {books: books});
+    }
+  });
 });
 
 /* PUT update book */
 router.post("/:id", (req, res, next) => {
-  console.log(req.body);
   Book.update(
     {
       title: req.body.title,

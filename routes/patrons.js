@@ -21,17 +21,26 @@ router.get('/new', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  Patron.findById(req.params.id)
-  .then((patron) => {
-    res.render("patron_detail", {
-      patron: patron,
-      first_name: patron.first_name,
-      last_name: patron.last_name,
-      address: patron.address,
-      email: patron.email,
-      library_id: patron.library_id,
-      zip_code: patron.zip_code
-    });
+  Patron.findAll({
+    where: {'id': req.params.id},
+    include: [
+      {
+        model: Loan,
+        include: [
+          {
+            model: Book
+          }
+        ]
+      }
+    ]
+  })
+  .then((patrons) => {
+    console.log(patrons[0].Loans);
+    if (patrons[0].Loans) {
+      res.render("patron_detail_loan", {patrons: patrons});
+    } else {
+      res.render("patron_detail", {patrons: patrons});
+    }
   });
 });
 
