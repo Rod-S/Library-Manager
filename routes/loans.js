@@ -5,6 +5,11 @@ var Book = require('../models').Book;
 var Patron = require('../models').Patron;
 
 
+date = new Date();
+date.setDate(date.getDate() + 7);
+var date = date.toISOString().split('T')[0];
+
+
 /* GET loan list */
 router.get('/', function(req, res, next) {
   Loan.findAll({
@@ -26,7 +31,8 @@ router.get('/', function(req, res, next) {
 router.get('/new', function(req, res, next) {
   res.render('new_loan', {
     loan: Loan.build(),
-    title: "New Loan"
+    title: "New Loan",
+    returnDate: date
   });
 });
 
