@@ -1,5 +1,5 @@
 var express = require('express');
-var router = express.Router();
+var router = express.Router({mergeParams: true});
 var Book = require('../models').Book;
 var Loan = require('../models').Loan;
 var Patron = require('../models').Patron;
@@ -49,13 +49,15 @@ router.get('/:id', (req, res, next) => {
     if (books[0].Loans[0]) {
       res.render("book_detail_loan", {books: books});
     } else {
-      res.render("book_detail", {books: books});
+      res.render("book_detail", {books: books, id: req.params.id});
     }
   });
 });
 
 /* PUT update book */
-router.post("/:id", (req, res, next) => {
+/*
+router.post('/:id', (req, res, next) => {
+
   Book.update(
     {
       title: req.body.title,
@@ -63,9 +65,29 @@ router.post("/:id", (req, res, next) => {
       genre: req.body.genre,
       first_published: req.body.first_published
     },
-    {where: {id: req.params.id}}
-  )
+    {where: {'id': req.params.id }
+  })
   .then((book) => {
+    res.redirect("/books/");
+  });
+});
+*/
+
+router.post('/:id', (req, res, next) => {
+  Book.findById(req.params.id).then((books) => {
+    console.log(books);
+    Book.update(
+      {
+        title: req.body.title,
+        author: req.body.author,
+        genre: req.body.genre,
+        first_published: req.body.first_published
+      }, {
+        where: {'id': req.params.id}
+      }
+    )
+  })
+  .then((books) => {
     res.redirect("/books/");
   });
 });
