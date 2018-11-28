@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var books = require('./routes/books');
 var loans = require('./routes/loans');
 var patrons = require('./routes/patrons');
+var methodOverride = require('method-override');
 
 var app = express();
 
@@ -15,6 +16,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use(methodOverride('_method'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

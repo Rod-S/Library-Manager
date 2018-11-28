@@ -73,9 +73,8 @@ router.post('/:id', (req, res, next) => {
 });
 */
 
-router.post('/:id', (req, res, next) => {
+router.put('/:id', (req, res, next) => {
   Book.findById(req.params.id).then((books) => {
-    console.log(books);
     Book.update(
       {
         title: req.body.title,
