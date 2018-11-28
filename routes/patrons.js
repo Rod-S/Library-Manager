@@ -63,5 +63,24 @@ router.get('/return_book/:id', function(req, res, next){
   })
 });
 
+router.put('/:id', function(req, res, next) {
+  Patron.findById(req.params.id).then((patrons) => {
+    Patron.update(
+      {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        address: req.body.address,
+        email: req.body.email,
+        library_id: req.body.library_id,
+        zip_code: req.body.zip_code
+      }, {
+        where: {'id': req.params.id}
+      }
+    )
+  })
+  .then((patrons) => {
+    res.redirect("/patrons/");
+  });
+})
 
 module.exports = router;

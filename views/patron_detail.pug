@@ -2,7 +2,7 @@ extends layout
 
 block content
   h1 Patron: #{patrons[0].first_name} #{patrons[0].last_name}
-  form
+  form(action='/patrons/' + patrons[0].id + '?_method=PUT', method="post")
     p
       label(for='first_name') First Name
       input#first_name(type='text', name="first_name" value=patrons[0].first_name)
