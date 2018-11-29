@@ -6,13 +6,23 @@ var Book = require('../models').Book;
 
 /* GET patron list */
 router.get('/', function (req, res, next) {
-
   Patron.findAll()
   .then((patrons) => {
     res.render("all_patrons", {patrons: patrons});
   });
 });
 
+/* POST create patron */
+router.post('/', (req, res, next) => {
+  console.log(req.body);
+  Patron.create(req.body)
+  .then((patron) => {
+    res.redirect('/patrons/');
+  });
+});
+
+
+/* create a new patron form */
 router.get('/new', function(req, res, next) {
   res.render('new_patron', {
     patron: Patron.build(),
@@ -20,6 +30,7 @@ router.get('/new', function(req, res, next) {
   });
 });
 
+/* GET individual patron */
 router.get('/:id', function(req, res, next) {
   Patron.findAll({
     where: {'id': req.params.id},
@@ -36,7 +47,7 @@ router.get('/:id', function(req, res, next) {
   })
   .then((patrons) => {
     console.log(patrons[0].Loans);
-    if (patrons[0].Loans) {
+    if (patrons[0].Loans[0]) {
       res.render("patron_detail_loan", {patrons: patrons});
     } else {
       res.render("patron_detail", {patrons: patrons});
@@ -81,6 +92,33 @@ router.put('/:id', function(req, res, next) {
   .then((patrons) => {
     res.redirect("/patrons/");
   });
-})
+});
+
+router.put('/return_book/:id', function(req, res, next) {
+  Loan.findAll({
+    where: {'book_id': req.params.id},
+    include: [
+      {
+        model: Book,
+        required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  }).then((loans) => {
+    Loan.update(
+      {
+      returned_on: req.body.returned_on
+    }, {
+      where: {'book_id': req.params.id}
+    }
+  )
+  .then((loans) => {
+      res.redirect("/loans/")
+    });
+  });
+});
 
 module.exports = router;

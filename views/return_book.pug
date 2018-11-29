@@ -14,9 +14,9 @@ block content
   p
     strong Return By: 
     | #{loans[0].return_by}
-  form
+  form(action='/patrons/return_book/' + loans[0].book_id + '?_method=PUT', method="post")
     p
       label(for='returned_on') Returned on:
-      input#returned_on(type='text' value='2020-10-10')
+      input#returned_on(type='text' name='returned_on' value=new Date().toISOString().split('T')[0])
     p
       input(type='submit' value='Return Book')

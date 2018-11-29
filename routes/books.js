@@ -4,7 +4,6 @@ var Book = require('../models').Book;
 var Loan = require('../models').Loan;
 var Patron = require('../models').Patron;
 
-
 /* GET book list */
 router.get('/', function(req, res, next) {
   Book.findAll()
@@ -30,7 +29,7 @@ router.get('/new', (req, res, next) => {
   });
 });
 
-/* get individual book */
+/* GET individual book */
 router.get('/:id', (req, res, next) => {
   Book.findAll({
     where: {'id': req.params.id},
@@ -55,24 +54,6 @@ router.get('/:id', (req, res, next) => {
 });
 
 /* PUT update book */
-/*
-router.post('/:id', (req, res, next) => {
-
-  Book.update(
-    {
-      title: req.body.title,
-      author: req.body.author,
-      genre: req.body.genre,
-      first_published: req.body.first_published
-    },
-    {where: {'id': req.params.id }
-  })
-  .then((book) => {
-    res.redirect("/books/");
-  });
-});
-*/
-
 router.put('/:id', (req, res, next) => {
   Book.findById(req.params.id).then((books) => {
     Book.update(
