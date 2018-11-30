@@ -21,7 +21,6 @@ router.post('/', (req, res, next) => {
   });
 });
 
-
 /* create a new patron form */
 router.get('/new', function(req, res, next) {
   res.render('new_patron', {
