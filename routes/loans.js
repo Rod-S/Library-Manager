@@ -32,27 +32,10 @@ router.get('/', function(req, res, next) {
 router.post('/', (req, res, next) => {
   console.log(req.body);
   Loan.create(req.body)
-  .then((loans) => {
+  .then((loan) => {
     res.redirect('/loans/');
   });
 });
-
-
-/* create a new loan form */
-/*
-router.get('/new', function(req, res, next) {
-  Book.findAll()
-  .then((books) => {
-    console.log(books);
-    res.render('new_loan', {
-      loan: Loan.build(),
-      title: "New Loan",
-      returnDate: date,
-      books: books
-    });
-  });
-});
-*/
 
 router.get('/new', function(req, res, next) {
   //Place unrelated queries in a single promise to render when resolved
@@ -62,7 +45,6 @@ router.get('/new', function(req, res, next) {
     Patron.findAll()
   ]).
     then(([books, patrons]) => {
-      console.log(patrons);
       res.render('new_loan', {
         loan: Loan.build(),
         title: "New Loan",
