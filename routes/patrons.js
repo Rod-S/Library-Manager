@@ -47,7 +47,10 @@ router.get('/:id', function(req, res, next) {
   .then((patrons) => {
     console.log(patrons[0].Loans);
     if (patrons[0].Loans[0]) {
-      res.render("patron_detail_loan", {patrons: patrons});
+      res.render("patron_detail_loan", {
+        patrons: patrons,
+        loans: patrons[0].Loans
+      });
     } else {
       res.render("patron_detail", {patrons: patrons});
     }
