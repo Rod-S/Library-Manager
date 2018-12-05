@@ -46,9 +46,15 @@ router.get('/:id', (req, res, next) => {
   })
   .then((books)=> {
     if (books[0].Loans[0]) {
-      res.render("book_detail_loan", {books: books});
+      res.render("book_detail_loan", {
+        books: books,
+        loans: books[0].Loans
+      });
     } else {
-      res.render("book_detail", {books: books, id: req.params.id});
+      res.render("book_detail", {
+        books: books,
+        id: req.params.id
+      });
     }
   });
 });

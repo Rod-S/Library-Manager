@@ -28,17 +28,18 @@ block content
         th Returned on
         th Action
     tbody
-      tr
+      each loan in loans
+        tr
           td
             a(href='/../books/' + books[0].id) #{books[0].title}
           td
-            a(href='/../patrons/'+ books[0].Loans[0].Patron.id) #{books[0].Loans[0].Patron.first_name + ' ' + books[0].Loans[0].Patron.last_name}
-          td #{books[0].Loans[0].loaned_on}
-          td #{books[0].Loans[0].return_by}
-          if books[0].Loans[0].returned_on  
-            td #{books[0].Loans[0].returned_on}          
+            a(href='/../patrons/'+ loan.Patron.id) #{loan.Patron.first_name + ' ' + loan.Patron.last_name}
+          td #{loan.loaned_on}
+          td #{loan.return_by}
+          if loan.returned_on  
+            td #{loan.returned_on}          
             td
-          if !books[0].Loans[0].returned_on
+          if !loan.returned_on
             td
             td  
               a.button(href='/../patrons/return_book/'+ books[0].id) Return Book
