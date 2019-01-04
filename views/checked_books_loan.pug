@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 Overdue Books
+  h1 Checked Out Books
   p
     a.button(href='/books/new') Create New Book
   p
@@ -18,11 +18,11 @@ block content
         th Author
         th Genre
         th Year Released
-        tbody
-          tr
-            td
-            td
-            td
-            td
-            td
-            td    
+    tbody
+      each loan in loans
+        tr
+          td
+            a(href='/books/' + loan.Book.id) #{loan.Book.title}
+          td= loan.Book.author
+          td= loan.Book.genre
+          td= loan.Book.first_published
