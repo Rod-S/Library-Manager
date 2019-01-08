@@ -3,6 +3,7 @@ var router = express.Router();
 var Loan = require('../models').Loan;
 var Book = require('../models').Book;
 var Patron = require('../models').Patron;
+var { Op } = require('sequelize');
 
 
 date = new Date();
@@ -36,6 +37,75 @@ router.post('/', (req, res, next) => {
     res.redirect('/loans/');
   });
 });
+
+/* GET overdue loans */
+router.get('/overdue', (req, res, next) => {
+  Loan.findAll({
+    where: {'returned_on': null, 'return_by': {[Op.lt]: Date() } } ,
+    include: [
+      {
+        model: Book,
+        required: true
+      },
+      {
+        model: Patron,
+        required: true
+      }
+    ]
+  })
+  .then((loans)=> {
+    if (loans) {
+          console.log(loans);
+      res.render("overdue_loans_loan", {
+        loans: loans,
+        books: loans[0].Book,
+        patron: loans[0].Patron
+      });
+    } else {
+          console.log(loans.Book);
+      res.render("overdue_loans", {
+        loans: loans,
+        id: req.params.id
+      });
+    }
+  });
+});
+
+/* GET checked out loans */
+router.get('/checked_out', (req, res, next) => {
+
+  Loan.findAll({
+    where: {'returned_on': null },
+    include: [
+      {
+        model: Book,
+        required: true
+      }, {
+        model: Patron,
+        required: true
+      }
+    ]
+  })
+  .then((loans)=> {
+    if (loans) {
+          console.log(loans);
+      res.render("checked_loans_loan", {
+        loans: loans,
+        books: loans[0].Book,
+        patrons: loans[0].Patron
+      });
+    } else {
+          console.log(loans.Book);
+      res.render("checked_loans", {
+        loans: loans,
+        id: req.params.id
+      });
+    }
+  });
+
+});
+
+/* CREATE new loan form */
 
 router.get('/new', function(req, res, next) {
   //Place unrelated queries in a single promise to render when resolved

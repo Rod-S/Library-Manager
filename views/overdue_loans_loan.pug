@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 Loans
+  h1 Overdue Loans
   p
     a.button(href='/loans/new') Create New Loan
   p
@@ -24,7 +24,7 @@ block content
       each loan in loans
         tr
           td
-            a(href='/books/' + loan.book_id) #{loan.Book.title}
+            a(href='/books/' + loan.Book.id) #{loan.Book.title}
           td
             a(href='/patrons/' + loan.patron_id) #{loan.Patron.first_name} #{loan.Patron.last_name}
           td #{loan.loaned_on}
@@ -32,4 +32,4 @@ block content
           td #{loan.returned_on}
           td
             if loan.returned_on == null
-              a.button(href='/../patrons/return_book/' + loan.book_id) Return Book
+            a.button(href='/../patrons/return_book/' + loan.book_id) Return Book
