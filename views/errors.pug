@@ -1,0 +1,5 @@
+if(errors)
+  h2.errors(style={color: 'red'}) An error occured!
+  ul.errors(style={color: 'red'})
+    each error in errors
+      li -#{error.message}*
