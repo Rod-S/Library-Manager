@@ -33,7 +33,17 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    returned_on: DataTypes.DATEONLY
+    returned_on: {
+      type: DataTypes.DATEONLY,
+      validate: {
+        notEmpty: {
+          msg: "Returned on date is required"
+        },
+        isDate: {
+          msg: "Returned on date must be in date format. (yyyy-mm-dd)"
+        }
+      }
+    }
   }, {});
   Loan.associate = function(models) {
     // associations can be defined here

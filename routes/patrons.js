@@ -18,6 +18,19 @@ router.post('/', (req, res, next) => {
   Patron.create(req.body)
   .then((patron) => {
     res.redirect('/patrons/');
+  }).catch((err) => {
+    console.log(err);
+    if(err.name === "SequelizeValidationError") {
+      res.render("new_patron", {
+        patron: Patron.build(req.body),
+        title: "New Patron",
+        errors: err.errors
+      });
+    } else {
+      throw err;
+    }
+  }).catch((err) => {
+    res.sendStatus(500);
   });
 });
 
