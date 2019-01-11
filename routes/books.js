@@ -15,11 +15,11 @@ router.get('/', function(req, res, next) {
 
 /* POST create book */
 router.post('/', (req, res, next) => {
-  console.log(req.body);
   Book.create(req.body)
   .then((book) => {
     res.redirect('/books/');
-  }).catch((err) => {
+  })
+  .catch((err) => {
     console.log(err);
     if(err.name === 'SequelizeValidationError') {
       res.render("new_book", {
@@ -119,8 +119,8 @@ router.get('/:id', (req, res, next) => {
   .then((books)=> {
     if (books[0].Loans[0]) {
       res.render("book_detail_loan", {
-        books: loans[0].Book,
-        loans: loans
+        books: books,
+        loans: books[0].Loans
       });
     } else {
       res.render("book_detail", {
@@ -133,7 +133,8 @@ router.get('/:id', (req, res, next) => {
 
 /* PUT update book */
 router.put('/:id', (req, res, next) => {
-  Book.findById(req.params.id).then((books) => {
+  Book.findById(req.params.id)
+  .then((books) => {
     Book.update(
       {
         title: req.body.title,
@@ -146,7 +147,32 @@ router.put('/:id', (req, res, next) => {
     )
   })
   .then((books) => {
-    res.redirect("/books/");
+    res.redirect("/books/" + req.params.id);
+  })
+  .catch((err) => {
+    console.log(err);
+    if(err.name === 'SequelizeValidationError') {
+      if (books[0].Loans[0]) {
+        res.render("book_detail_loan", {
+          book: Book.build(req.body),
+          books: loans[0].Book,
+          loans: loans,
+          errors: err.errors
+        });
+      }
+      else if (!books[0].Loans[0]) {
+        res.render("book_detail", {
+          book: Book.build(req.body),
+          books: books,
+          id: req.params.id,
+          errors: err.errors
+        })
+      };
+    } else {
+      throw err;
+    }
+  }).catch((err) => {
+    res.sendStatus(500);
   });
 });
 

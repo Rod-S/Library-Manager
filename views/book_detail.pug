@@ -2,6 +2,7 @@ extends layout
 
 block content
   h1 Book: #{books[0].title}
+  include errors
   form(action="/books/" + books[0].id + '?_method=PUT', method="post")
     p
       label(for='title') Title

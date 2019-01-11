@@ -1,7 +1,8 @@
 extends layout
 
 block content
-  h1 #{title}
+  h1= title
+  include errors
   form(action="/loans", method="post")
     p
       label(for='book_id') Book

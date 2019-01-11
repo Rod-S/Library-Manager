@@ -1,5 +1,5 @@
 var express = require('express');
-var router = express.Router();
+var router = express.Router({mergeParams: true});
 var Loan = require('../models').Loan;
 var Book = require('../models').Book;
 var Patron = require('../models').Patron;
@@ -31,10 +31,32 @@ router.get('/', function(req, res, next) {
 
 /* POST create loan */
 router.post('/', (req, res, next) => {
-  console.log(req.body);
   Loan.create(req.body)
   .then((loan) => {
     res.redirect('/loans/');
+  })
+  .catch((err) => {
+    console.log(req.body);
+    //console.log(err);
+    if (err.name === 'SequelizeValidationError') {
+      return Promise.all([
+        Book.findAll()
+        .then(books => books),
+        Patron.findAll()
+      ]).
+        then(([books, patrons]) => {
+          res.render('new_loan', {
+            loan: Loan.build(),
+            title: "New Loan",
+            returnDate: date,
+            books: books,
+            patrons: patrons,
+            errors: err.errors
+          });
+        });
+    } else {
+      throw err;
+    }
   });
 });
 
