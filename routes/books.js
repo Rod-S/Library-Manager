@@ -132,6 +132,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 /* PUT update book */
+/*
 router.put('/:id', (req, res, next) => {
   Book.findById(req.params.id)
   .then((books) => {
@@ -175,7 +176,62 @@ router.put('/:id', (req, res, next) => {
     res.sendStatus(500);
   });
 });
+*/
 
+router.put('/:id', (req, res, next) => {
+  return Promise.all([
+    Book.findById(req.params.id)
+    .then(books => books),
+      Book.update(
+        {
+          title: req.body.title,
+          author: req.body.author,
+          genre: req.body.genre,
+          first_published: req.body.first_published
+        }, {
+          where: {'id': req.params.id}
+        }
+      )
+  ])
+  .then((books) => {
+    res.redirect("/books/");
+  })
+  .catch((err) => {
+    console.log(err);
+    Book.findAll({
+      where: {'id': req.params.id},
+      include: [
+        {
+          model: Loan,
+          include: [
+            {
+              model: Patron
+            }
+          ]
+        }
+      ]
+    })
+    .then((books)=> {
+      console.log(req.body);
+      if (books[0].Loans[0]) {
+        res.render("book_detail_loan", {
+          book: Book.build(req.body),
+          books: books,
+          loans: books[0].Loans,
+          errors: err.errors
+        });
+      }
+      if (!books[0].Loans[0]) {
+        res.render("book_detail", {
+          book: Book.build(req.body),
+          books: books,
+          id: req.params.id,
+          errors: err.errors
+        })
+      };
+    })
+  })
+});
 
 
 
