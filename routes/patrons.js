@@ -90,53 +90,56 @@ router.get('/return_book/:id', function(req, res, next){
 });
 
 router.put('/:id', function(req, res, next) {
-  Patron.findById(req.params.id).then((patrons) => {
-    Patron.update(
-      {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        address: req.body.address,
-        email: req.body.email,
-        library_id: req.body.library_id,
-        zip_code: req.body.zip_code
-      }, {
-        where: {'id': req.params.id}
-      }
-    )
-  })
+  return Promise.all([
+    Patron.findById(req.params.id)
+    .then(patrons => patrons),
+      Patron.update(
+        {
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          address: req.body.address,
+          email: req.body.email,
+          library_id: req.body.library_id,
+          zip_code: req.body.zip_code
+        }, {
+          where: {'id': req.params.id}
+        }
+      )
+  ])
   .then((patrons) => {
     res.redirect("/patrons/");
-  });
-});
-
-/*
-router.put('/return_book/:id', function(req, res, next) {
-  Loan.findAll({
-    where: {'book_id': req.params.id},
-    include: [
-      {
-        model: Book,
-        required: true
-      },
-      {
-        model: Patron,
-        required: true
-      }
-    ]
-  }).then((loans) => {
-    Loan.update(
-      {
-      returned_on: req.body.returned_on
-    }, {
-      where: {'book_id': req.params.id}
-    }
-  )
-  .then((loans) => {
-      res.redirect("/loans/")
+  })
+  .catch((err) => {
+    console.log(err);
+    Patron.findAll({
+      where: {'id': req.params.id},
+      include: [
+        {
+          model: Loan,
+          include: [
+            {
+              model: Book
+            }
+          ]
+        }
+      ]
+    }).then((patrons) => {
+      console.log(req.body);
+      if (patrons[0].Loans[0]) {
+        res.render("patron_detail_loan", {
+          patrons: patrons,
+          loans: patrons[0].Loans,
+          errors: err.errors
+        });
+      } else {
+        res.render("patron_detail", {
+          patrons: patrons,
+          errors: err.errors
+        });
+      };
     });
   });
 });
-*/
 
 router.put('/return_book/:id', function(req, res, next) {
   return Promise.all([
