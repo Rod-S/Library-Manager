@@ -109,6 +109,7 @@ router.put('/:id', function(req, res, next) {
   });
 });
 
+/*
 router.put('/return_book/:id', function(req, res, next) {
   Loan.findAll({
     where: {'book_id': req.params.id},
@@ -135,5 +136,57 @@ router.put('/return_book/:id', function(req, res, next) {
     });
   });
 });
+*/
+
+router.put('/return_book/:id', function(req, res, next) {
+  return Promise.all([
+    Loan.findAll({
+      where: {'book_id': req.params.id},
+      include: [
+        {
+          model: Book,
+          required: true
+        },
+        {
+          model: Patron,
+          required: true
+        }
+      ]
+    })
+    .then(loans => loans),
+      Loan.update(
+        {
+          returned_on: req.body.returned_on
+        }, {
+          where: {'book_id': req.params.id}
+        }
+      )
+  ])
+  .then((loans) => {
+      res.redirect("/loans/")
+    }).catch((err) => {
+      Loan.findAll({
+        where: {'book_id': req.params.id},
+        include: [
+          {
+            model: Book,
+            required: true
+          },
+          {
+            model: Patron,
+            required: true
+          }
+        ]
+      }).then((loans) => {
+      console.log(err);
+      res.render("return_book", {
+        loans: loans,
+        errors: err.errors
+      })
+    })
+    });
+  });
+
+
 
 module.exports = router;

@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Returned on date is required"
         },
         isDate: {
-          msg: "Returned on date must be in date format. (yyyy-mm-dd)"
+          msg: "Returned on date must be in correct date format: (yyyy-mm-dd)"
         }
       }
     }
