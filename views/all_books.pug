@@ -2,6 +2,13 @@ extends layout
 
 block content
   h1 Books
+  prepend content
+    h3 Search      
+      .book-search
+        input#search(placeholder='Search for books...')
+        a.button#searchButton Search   
+        br
+        br
   p
     a.button(href='/books/new') Create New Book
   p
@@ -25,7 +32,7 @@ block content
             a(href='/books/' + book.id) #{book.title}
           td= book.author
           td= book.genre
-          td= book.first_published
+          td= book.first_published            
   append content 
     if pages > 0
     - var n = 1;
