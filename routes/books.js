@@ -6,7 +6,6 @@ var Patron = require('../models').Patron;
 var { Op } = require('sequelize');
 
 /* GET book list */
-
 router.get('/', function(req, res, next) {
   Book.findAll()
   .then((books)=> {
@@ -14,6 +13,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
+/*Pagination route for all books listing */
 router.get('/page_:page', function(req, res, next) {
   let page = req.params.page;
   let limit = 5;

@@ -8,9 +8,33 @@ var Book = require('../models').Book;
 router.get('/', function (req, res, next) {
   Patron.findAll()
   .then((patrons) => {
-    res.render("all_patrons", {patrons: patrons});
+    res.redirect('/patrons/page_0');
   });
 });
+
+/*Pagination route for all patrons listing */
+router.get('/page_:page', function(req, res, next) {
+  let page = req.params.page;
+  let limit = 5;
+  let offset = page * limit;
+  Patron.findAndCountAll({
+    attributes: ['id', 'first_name', 'last_name', 'address', 'email', 'library_id', 'zip_code'],
+    limit: limit,
+    offset: offset,
+    $sort: {id: 1}
+  })
+  .then((patrons) => {
+      let pages = Math.ceil(patrons.count / limit);
+      offset = limit * (page -1);
+      console.log(pages);
+      res.render("all_patrons", {
+        patrons: patrons.rows,
+        count: patrons.count,
+        pages: pages
+      })
+  });
+});
+
 
 /* POST create patron */
 router.post('/', (req, res, next) => {
