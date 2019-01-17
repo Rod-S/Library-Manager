@@ -6,12 +6,61 @@ var Patron = require('../models').Patron;
 var { Op } = require('sequelize');
 
 /* GET book list */
+
 router.get('/', function(req, res, next) {
   Book.findAll()
   .then((books)=> {
     res.render("all_books", {books: books});
   });
 });
+
+
+/*
+router.get('/page_:page', function(req, res, next) {
+  let page = req.params.page;
+  let limit = 5;
+  let offset = page * limit;
+  Book.findAll({
+    attributes: ['id', 'title', 'author', 'genre', 'first_published'],
+    limit: limit,
+    offset: offset,
+    $sort: {id: 1}
+  })
+  .then((books)=> {
+    let pages = Math.ceil(books.count / limit);
+    offset = limit * (page - 1);
+    res.status(200).json({
+      'result': books,
+      'count': books.count,
+      'pages': pages
+    });
+  });
+});
+*/
+
+router.get('/page_:page', function(req, res, next) {
+  let page = req.params.page;
+  let limit = 5;
+  let offset = page * limit;
+  Book.findAndCountAll({
+    attributes: ['id', 'title', 'author', 'genre', 'first_published'],
+    limit: limit,
+    offset: offset,
+    $sort: {id: 1}
+  })
+  .then((books)=> {
+    let pages = Math.ceil(books.count / limit);
+    offset = limit * (page - 1);
+    console.log(pages);
+    res.render("all_books", {
+      books: books.rows,
+      count: books.count,
+      pages: pages
+    });
+  });
+});
+
+
 
 /* POST create book */
 router.post('/', (req, res, next) => {
@@ -130,53 +179,6 @@ router.get('/:id', (req, res, next) => {
     }
   });
 });
-
-/* PUT update book */
-/*
-router.put('/:id', (req, res, next) => {
-  Book.findById(req.params.id)
-  .then((books) => {
-    Book.update(
-      {
-        title: req.body.title,
-        author: req.body.author,
-        genre: req.body.genre,
-        first_published: req.body.first_published
-      }, {
-        where: {'id': req.params.id}
-      }
-    )
-  })
-  .then((books) => {
-    res.redirect("/books/" + req.params.id);
-  })
-  .catch((err) => {
-    console.log(err);
-    if(err.name === 'SequelizeValidationError') {
-      if (books[0].Loans[0]) {
-        res.render("book_detail_loan", {
-          book: Book.build(req.body),
-          books: loans[0].Book,
-          loans: loans,
-          errors: err.errors
-        });
-      }
-      else if (!books[0].Loans[0]) {
-        res.render("book_detail", {
-          book: Book.build(req.body),
-          books: books,
-          id: req.params.id,
-          errors: err.errors
-        })
-      };
-    } else {
-      throw err;
-    }
-  }).catch((err) => {
-    res.sendStatus(500);
-  });
-});
-*/
 
 router.put('/:id', (req, res, next) => {
   return Promise.all([

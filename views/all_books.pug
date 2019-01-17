@@ -26,3 +26,12 @@ block content
           td= book.author
           td= book.genre
           td= book.first_published
+  append content 
+    if pages > 0
+    - var n = 1;
+      div.pagination        
+        ul.pagination-ul
+          while n < pages + 1
+            li
+              a(href='/books/page_' + (n-1))= n++
+            
