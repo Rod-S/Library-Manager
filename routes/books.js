@@ -10,33 +10,9 @@ var { Op } = require('sequelize');
 router.get('/', function(req, res, next) {
   Book.findAll()
   .then((books)=> {
-    res.render("all_books", {books: books});
+    res.redirect('/books/page_0');
   });
 });
-
-
-/*
-router.get('/page_:page', function(req, res, next) {
-  let page = req.params.page;
-  let limit = 5;
-  let offset = page * limit;
-  Book.findAll({
-    attributes: ['id', 'title', 'author', 'genre', 'first_published'],
-    limit: limit,
-    offset: offset,
-    $sort: {id: 1}
-  })
-  .then((books)=> {
-    let pages = Math.ceil(books.count / limit);
-    offset = limit * (page - 1);
-    res.status(200).json({
-      'result': books,
-      'count': books.count,
-      'pages': pages
-    });
-  });
-});
-*/
 
 router.get('/page_:page', function(req, res, next) {
   let page = req.params.page;
