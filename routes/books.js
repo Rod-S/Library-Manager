@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 });
 
 /*Pagination route for all books listing */
-router.get('/page_:page', function(req, res, next) {
+router.get('/page_:page', (req, res, next) => {
   let page = req.params.page;
   let limit = 5;
   let offset = page * limit;
@@ -43,36 +43,11 @@ router.get('/page_:page', function(req, res, next) {
 /* POST submit search */
 router.post('/', (req, res, next) => {
   let searchFilter = req.body.searchFilter;
-  console.log(req.body.searchFilter);
-  if (req.body.searchFilter != '') {
-    Book.findAll({
-      where: {
-        [Op.or]: [
-          {'title': {[Op.like]: '%' + searchFilter + '%'}},
-          {'author': {[Op.like]: '%' + searchFilter+ "%"}},
-          {'genre': {[Op.like]: '%' + searchFilter+ "%"}},
-          {'first_published': {[Op.like]: '%' + searchFilter+ "%"}}
-        ]
-      }
-    }).then((books) => {
-      res.render("all_books", {
-        books: books,
-        searchFilter: searchFilter
-      })
-    });
-  } else {
-    res.redirect('/books/')
-  }
-});
-
-/* POST submit search */
-/*
-router.post('/', (req, res, next) => {
-  let searchFilter = req.body.searchFilter;
-  let page = req.params.page;
+  let page = 0;
   let limit = 5;
   let offset = page * limit;
-  console.log(req.body.searchFilter);
+  console.log('searchFilter = ' + req.body.searchFilter);
+  console.log(limit);
   if (req.body.searchFilter != '') {
     Book.findAndCountAll({
       attributes: ['id', 'title', 'author', 'genre', 'first_published'],
@@ -93,6 +68,7 @@ router.post('/', (req, res, next) => {
       res.render("all_books", {
         books: books.rows,
         count: books.count,
+        pages: pages,
         searchFilter: searchFilter
       })
     });
@@ -100,7 +76,6 @@ router.post('/', (req, res, next) => {
     res.redirect('/books/')
   }
 });
-*/
 
 /* POST create book */
 router.post('/new', (req, res, next) => {
