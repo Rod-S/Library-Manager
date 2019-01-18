@@ -5,6 +5,11 @@ var Loan = require('../models').Loan;
 var Patron = require('../models').Patron;
 var { Op } = require('sequelize');
 
+/*
+//-input#search(type='text', name="searchFilter", placeholder='Search for books...')
+//-a.button(onclick='el = document.querySelector("#search").value')#searchButton Search
+*/
+
 /* GET book list */
 router.get('/', function(req, res, next) {
   Book.findAll()
@@ -27,7 +32,6 @@ router.get('/page_:page', function(req, res, next) {
   .then((books)=> {
     let pages = Math.ceil(books.count / limit);
     offset = limit * (page - 1);
-    console.log(pages);
     res.render("all_books", {
       books: books.rows,
       count: books.count,
@@ -36,10 +40,70 @@ router.get('/page_:page', function(req, res, next) {
   });
 });
 
+/* POST submit search */
+router.post('/', (req, res, next) => {
+  let searchFilter = req.body.searchFilter;
+  console.log(req.body.searchFilter);
+  if (req.body.searchFilter != '') {
+    Book.findAll({
+      where: {
+        [Op.or]: [
+          {'title': {[Op.like]: '%' + searchFilter + '%'}},
+          {'author': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'genre': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'first_published': {[Op.like]: '%' + searchFilter+ "%"}}
+        ]
+      }
+    }).then((books) => {
+      res.render("all_books", {
+        books: books,
+        searchFilter: searchFilter
+      })
+    });
+  } else {
+    res.redirect('/books/')
+  }
+});
 
+/* POST submit search */
+/*
+router.post('/', (req, res, next) => {
+  let searchFilter = req.body.searchFilter;
+  let page = req.params.page;
+  let limit = 5;
+  let offset = page * limit;
+  console.log(req.body.searchFilter);
+  if (req.body.searchFilter != '') {
+    Book.findAndCountAll({
+      attributes: ['id', 'title', 'author', 'genre', 'first_published'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1},
+      where: {
+        [Op.or]: [
+          {'title': {[Op.like]: '%' + searchFilter + '%'}},
+          {'author': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'genre': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'first_published': {[Op.like]: '%' + searchFilter+ "%"}}
+        ]
+      }
+    }).then((books) => {
+      let pages = Math.ceil(books.count / limit);
+      offset = limit * (page - 1);
+      res.render("all_books", {
+        books: books.rows,
+        count: books.count,
+        searchFilter: searchFilter
+      })
+    });
+  } else {
+    res.redirect('/books/')
+  }
+});
+*/
 
 /* POST create book */
-router.post('/', (req, res, next) => {
+router.post('/new', (req, res, next) => {
   Book.create(req.body)
   .then((book) => {
     res.redirect('/books/');

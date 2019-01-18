@@ -3,7 +3,7 @@ extends layout
 block content
   h1= title
   include errors
-  form(action="/books", method="post")
+  form(action="/books/new", method="post")
     p
       label(for='title') Title
       input#title(type='text', name="title" value=book.title)
@@ -18,3 +18,4 @@ block content
       input#first_published(type='text', name="first_published" value=book.first_published)
     p
       input(type='submit' value='Create New Book')
+        

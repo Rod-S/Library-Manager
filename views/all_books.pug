@@ -3,12 +3,10 @@ extends layout
 block content
   h1 Books
   prepend content
-    h3 Search      
-      .book-search
-        input#search(placeholder='Search for books...')
-        a.button#searchButton Search   
-        br
-        br
+    form(action='/books', method="post")
+        p
+          input#search(type='text', name="searchFilter", placeholder='Search for books...', value=searchFilter)
+          input.button(type='submit' value='Search')      
   p
     a.button(href='/books/new') Create New Book
   p
