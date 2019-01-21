@@ -2,6 +2,11 @@ extends layout
 
 block content  
   h1 Patrons
+  prepend content
+    form(action='/patrons', method="post")
+        p
+          input#search(type='text', name="searchFilter", placeholder='Search for patrons...', value=searchFilter)
+          input.button(type='submit' value='Search')  
   p
     a.button(href='/patrons/new') Create New Patron
   table
@@ -28,4 +33,7 @@ block content
         ul.pagination-ul
           while n < pages + 1
             li
-              a(href='/patrons/page_' + (n-1))= n++
+              if !searchFilter
+                a(href='/patrons/page_' + (n-1))= n++
+              else 
+                a(href='/patrons/page_' + (n-1) + '/' + searchFilter)= n++

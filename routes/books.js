@@ -5,11 +5,6 @@ var Loan = require('../models').Loan;
 var Patron = require('../models').Patron;
 var { Op } = require('sequelize');
 
-/*
-//-input#search(type='text', name="searchFilter", placeholder='Search for books...')
-//-a.button(onclick='el = document.querySelector("#search").value')#searchButton Search
-*/
-
 /* GET book list */
 router.get('/', function(req, res, next) {
   let searchFilter = req.body.searchFilter;

@@ -3,41 +3,110 @@ var router = express.Router();
 var Patron = require('../models').Patron;
 var Loan = require('../models').Loan;
 var Book = require('../models').Book;
+var { Op } = require('sequelize');
 
 /* GET patron list */
 router.get('/', function (req, res, next) {
+  let searchFilter = req.body.searchFilter;
   Patron.findAll()
-  .then((patrons) => {
+  .then((patrons, searchFilter) => {
     res.redirect('/patrons/page_0');
   });
 });
 
 /*Pagination route for all patrons listing */
-router.get('/page_:page', function(req, res, next) {
+router.get('/page_:page?/:searchFilter?', function(req, res, next) {
+  let searchFilter = req.params.searchFilter;
+  console.log(searchFilter);
   let page = req.params.page;
   let limit = 5;
   let offset = page * limit;
-  Patron.findAndCountAll({
-    attributes: ['id', 'first_name', 'last_name', 'address', 'email', 'library_id', 'zip_code'],
-    limit: limit,
-    offset: offset,
-    $sort: {id: 1}
-  })
-  .then((patrons) => {
+  console.log(req.params.searchFilter);
+  if (req.params.searchFilter) {
+    Patron.findAndCountAll({
+      attributes: ['id', 'first_name', 'last_name', 'address', 'email', 'library_id', 'zip_code'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1},
+      where: {
+        [Op.or]: [
+          {'first_name': {[Op.like]: '%' + searchFilter + '%'}},
+          {'last_name': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'address': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'email': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'library_id': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'zip_code': {[Op.like]: '%' + searchFilter+ "%"}}
+        ]
+      }
+    })
+    .then((patrons) => {
+        let pages = Math.ceil(patrons.count / limit);
+        offset = limit * (page -1);
+        res.render("all_patrons", {
+          patrons: patrons.rows,
+          count: patrons.count,
+          pages: pages,
+          searchFilter: searchFilter
+        })
+    });
+  } else {
+    Patron.findAndCountAll({
+      attributes: ['id', 'first_name', 'last_name', 'address', 'email', 'library_id', 'zip_code'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1}
+    })
+    .then((patrons) => {
+        let pages = Math.ceil(patrons.count / limit);
+        offset = limit * (page -1);
+        res.render("all_patrons", {
+          patrons: patrons.rows,
+          count: patrons.count,
+          pages: pages
+        });
+    });
+  }
+});
+
+/* POST submit search */
+router.post('/', (req, res, next) => {
+  let searchFilter = req.body.searchFilter;
+  let page = 0;
+  let limit = 5;
+  let offset = page * limit;
+  if (req.body.searchFilter != '') {
+    Patron.findAndCountAll({
+      attributes: ['id', 'first_name', 'last_name', 'address', 'email', 'library_id', 'zip_code'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1},
+      where: {
+        [Op.or]: [
+          {'first_name': {[Op.like]: '%' + searchFilter + '%'}},
+          {'last_name': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'address': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'email': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'library_id': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'zip_code': {[Op.like]: '%' + searchFilter+ "%"}}
+        ]
+      }
+    }).then((patrons) => {
       let pages = Math.ceil(patrons.count / limit);
-      offset = limit * (page -1);
-      console.log(pages);
+      offset = limit * (page - 1);
       res.render("all_patrons", {
         patrons: patrons.rows,
         count: patrons.count,
-        pages: pages
+        pages: pages,
+        searchFilter: searchFilter
       })
-  });
+    });
+  } else {
+    res.redirect('/patrons/')
+  }
 });
 
-
 /* POST create patron */
-router.post('/', (req, res, next) => {
+router.post('/new', (req, res, next) => {
   console.log(req.body);
   Patron.create(req.body)
   .then((patron) => {
