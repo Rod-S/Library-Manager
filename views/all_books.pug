@@ -38,5 +38,7 @@ block content
         ul.pagination-ul
           while n < pages + 1
             li
-              a(href='/books/page_' + (n-1))= n++
-            
+              if !searchFilter
+                a(href='/books/page_' + (n-1))= n++
+              else 
+                a(href='/books/page_' + (n-1) + '/' + searchFilter)= n++

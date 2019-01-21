@@ -12,32 +12,63 @@ var { Op } = require('sequelize');
 
 /* GET book list */
 router.get('/', function(req, res, next) {
+  let searchFilter = req.body.searchFilter;
   Book.findAll()
-  .then((books)=> {
+  .then((books, searchFilter)=> {
     res.redirect('/books/page_0');
   });
 });
 
 /*Pagination route for all books listing */
-router.get('/page_:page', (req, res, next) => {
+router.get('/page_:page?/:searchFilter?', (req, res, next) => {
+  let searchFilter = req.params.searchFilter;
+  console.log(searchFilter);
   let page = req.params.page;
   let limit = 5;
   let offset = page * limit;
-  Book.findAndCountAll({
-    attributes: ['id', 'title', 'author', 'genre', 'first_published'],
-    limit: limit,
-    offset: offset,
-    $sort: {id: 1}
-  })
-  .then((books)=> {
-    let pages = Math.ceil(books.count / limit);
-    offset = limit * (page - 1);
-    res.render("all_books", {
-      books: books.rows,
-      count: books.count,
-      pages: pages
+  console.log(req.params.searchFilter);
+  if (req.params.searchFilter) {
+    Book.findAndCountAll({
+      attributes: ['id', 'title', 'author', 'genre', 'first_published'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1},
+      where: {
+        [Op.or]: [
+          {'title': {[Op.like]: '%' + searchFilter + '%'}},
+          {'author': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'genre': {[Op.like]: '%' + searchFilter+ "%"}},
+          {'first_published': {[Op.like]: '%' + searchFilter+ "%"}}
+        ]
+      }
+    })
+    .then((books)=> {
+      let pages = Math.ceil(books.count / limit);
+      offset = limit * (page - 1);
+      res.render("all_books", {
+        books: books.rows,
+        count: books.count,
+        pages: pages,
+        searchFilter: searchFilter
+      });
     });
-  });
+  } else {
+    Book.findAndCountAll({
+      attributes: ['id', 'title', 'author', 'genre', 'first_published'],
+      limit: limit,
+      offset: offset,
+      $sort: {id: 1}
+    })
+    .then((books)=> {
+      let pages = Math.ceil(books.count / limit);
+      offset = limit * (page - 1);
+      res.render("all_books", {
+        books: books.rows,
+        count: books.count,
+        pages: pages
+      });
+    });
+  }
 });
 
 /* POST submit search */
@@ -46,8 +77,6 @@ router.post('/', (req, res, next) => {
   let page = 0;
   let limit = 5;
   let offset = page * limit;
-  console.log('searchFilter = ' + req.body.searchFilter);
-  console.log(limit);
   if (req.body.searchFilter != '') {
     Book.findAndCountAll({
       attributes: ['id', 'title', 'author', 'genre', 'first_published'],
