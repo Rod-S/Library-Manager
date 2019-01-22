@@ -34,6 +34,12 @@ block content
           while n < pages + 1
             li
               if !searchFilter
-                a(href='/patrons/page_' + (n-1))= n++
+                if (n-1) == page
+                  a.active(href='/patrons/page_' + (n-1))= n++
+                else
+                  a(href='/patrons/page_' + (n-1))= n++
               else 
-                a(href='/patrons/page_' + (n-1) + '/' + searchFilter)= n++
+                if (n-1) == page
+                  a.active(href='/patrons/page_' + (n-1) + '/' + searchFilter)= n++
+                else
+                  a(href='/patrons/page_' + (n-1) + '/' + searchFilter)= n++
