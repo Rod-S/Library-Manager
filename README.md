@@ -1,4 +1,4 @@
-# Unit-10---library-manager
+# library-manager
 
 -This project uses Express and other Node.js dependencies to create a library database management website
 
